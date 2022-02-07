@@ -26,7 +26,7 @@ w_shaft = 4.7 + slop_w_shaft; // Outer width of stem shaft.
 l_shaft = 6.5 + slop_l_shaft; // Outer length of stem shaft.
 h_shaft = 4.6; // Height of stem shaft.
 
-chamfer_cap_top = 1.5; // Chamfer radius for top edge of keycap.
+r_cap_top_fillet = 1.5; // Fillet radius for top edge of keycap.
 
 cap();
 
@@ -36,7 +36,7 @@ translate([0, 0, t_cap_top - E])
 module cap() {
   difference() {
     // Base shape of cap.
-    cyl(d=d_cap, h=h_cap_walls, align=V_UP, fillet1=1.5);
+    cyl(d=d_cap, h=h_cap_walls, align=V_UP, fillet1=r_cap_top_fillet);
 
     // Hollow out the cap.
     translate([0, 0, t_cap_top])
