@@ -26,7 +26,7 @@ w_shaft = 4.7 + slop_w_shaft; // Outer width of stem shaft.
 l_shaft = 6.5 + slop_l_shaft; // Outer length of stem shaft.
 h_shaft = 4.6; // Height of stem shaft.
 
-chamfer_cap_top = 1.5;
+chamfer_cap_top = 1.5; // Chamfer radius for top edge of keycap.
 
 cap();
 
