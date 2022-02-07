@@ -26,7 +26,7 @@ w_shaft = 4.7 + slop_w_shaft; // Outer width of stem shaft.
 l_shaft = 6.5 + slop_l_shaft; // Outer length of stem shaft.
 h_shaft = 4.6; // Height of stem shaft.
 
-r_cap_top_fillet = 1.5; // Fillet radius for top edge of keycap.
+r_cap_top_fillet = 0; // Fillet radius for top edge of keycap.
 
 cap();
 
