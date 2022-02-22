@@ -28,6 +28,9 @@ h_shaft = 4.6; // Height of stem shaft.
 
 r_cap_top_fillet = 0; // Fillet radius for top edge of keycap.
 
+w_corner_gaps = 5; // Width of the gaps that give clearance to the corners of the switch when pressed.
+h_corner_gaps = h_cap_walls - (h_shaft + t_cap_top); // Height of the switch corner gaps.
+
 cap();
 
 translate([0, 0, t_cap_top - E])
@@ -43,11 +46,8 @@ module cap() {
       cyl(d=d_cap - t_cap_walls * 2, h=h_cap_walls, align=V_UP);
 
     // Cut notches at the bottom of the cap's walls.
-    zrot_copies([-45, 45]) translate([0, 0, t_cap_top + h_shaft])
-      cuboid(
-        [d_cap + E, 5, h_cap_walls - (h_shaft + t_cap_top) + E],
-        align=V_UP,
-      );
+    zrot_copies([-45, 45]) translate([0, 0, h_cap_walls + E])
+      cuboid([d_cap + E, w_corner_gaps, h_corner_gaps], align=V_DOWN);
   }
 }
 
