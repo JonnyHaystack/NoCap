@@ -22,8 +22,8 @@ t_stem = 1.17 + slop_t_stem; // Thickness of stem based on Cherry MX specificati
 l_stem = 4.1 + slop_l_stem; // End-to-end width/length of the slot for the stem based on Cherry MX specifications (+-0.05).
 h_stem = 3.6 + slop_h_stem; // Height of stem slot.
 
-w_shaft = 4.7 + slop_w_shaft; // Outer width of stem shaft.
-l_shaft = 6.5 + slop_l_shaft; // Outer length of stem shaft.
+w_shaft = 4.7 - slop_w_shaft; // Outer width of stem shaft.
+l_shaft = 6.5 - slop_l_shaft; // Outer length of stem shaft.
 h_shaft = 4.6; // Height of stem shaft.
 
 r_cap_top_fillet = 0; // Fillet radius for top edge of keycap.
