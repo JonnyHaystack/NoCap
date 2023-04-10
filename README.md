@@ -6,6 +6,7 @@ This keycap uses a rectangular stem shaft which is much easier to print on FDM p
 <img src="https://user-images.githubusercontent.com/1266473/229211387-ae02b253-672c-408d-84b1-5f0f73ca43cf.png" width="400" />
 
 
-To tweak the parameters of this model, you will need to install a recent development build of [CQ-Editor](https://github.com/CadQuery/CQ-editor#development-packages). You can then open the `NoCap.py` file in CQ-Editor, modify the parameters at the top of the file as needed, then click Render, click on the model preview to select it, and click Tools -> Export as STL.
+This model was designed using [build123d](https://github.com/gumyr/build123d). To tweak the parameters of this model, you should install either [OCP CAD Viewer for VS Code](https://github.com/bernhard-42/vscode-ocp-cad-viewer), or a development build of [this fork of CQ-Editor](https://github.com/jdegenstein/jmwright-CQ-Editor#development-packages). You can then open the `NoCap.py` file in VS Code or CQ-Editor, modify the parameters at the top of the file as needed, run the script, and the updated model will be outputted to `NoCap.step` and `NoCap.stl`.
 
-A STEP file is also included for those who would prefer to edit the model using their CAD package of choice.
+A STEP file is also included in this repository for those who would prefer to
+edit the model using their CAD package of choice.

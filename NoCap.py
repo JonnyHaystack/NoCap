@@ -1,7 +1,14 @@
-import cadquery as cq
+# %%
+from build123d import *
+from ocp_vscode import show, set_port, set_defaults
+
+set_port(3939)
+set_defaults(grid=(True, True, True), axes=True, axes0=True)
+
+# %%
 
 d_cap = 20.64  # Outer diameter of keycap.
-h_cap_walls = 8  # Height of keycap walls.
+h_cap = 8  # Overall height of keycap.
 t_cap_top = 2  # Thickness of top of keycap.
 t_cap_walls = 1.5  # Thickness of keycap walls
 r_cap_top_fillet = 1.5  # Fillet radius for top edge of keycap.
@@ -16,7 +23,8 @@ slop_h_stem = 0.2  # Increase if stem doesn't go all the way into the stem shaft
 h_stem_slot_chamfer = 0.8 # Height of stem slot chamfer.
 l_stem_slot_chamfer = 0.4 # Length of stem slot chamfer.
 
-# Don't change anything after here unless you need to.
+'''Don't change anything after here unless you need to.'''
+
 t_stem = 1.17 + slop_t_stem  # Thickness of stem based on Cherry MX specifications (+-0.02).
 l_stem = 4.1 + slop_l_stem  # End-to-end width/length of the slot for the stem based on Cherry MX specifications (+-0.05).
 h_stem = 3.6 + slop_h_stem  # Height of stem slot.
@@ -26,78 +34,51 @@ l_shaft = 6.5 - slop_l_shaft  # Outer length of stem shaft.
 h_shaft = 4.6  # Height of stem shaft.
 
 w_corner_gaps = 5  # Width of the gaps that give clearance to the corners of the switch when pressed.
-h_corner_gaps = h_cap_walls - (h_shaft + t_cap_top)  # Height of the switch corner gaps.
+h_corner_gaps = h_cap - (h_shaft + t_cap_top)  # Height of the switch corner gaps.
 
+with BuildPart() as cap:
+    # Create the main body of the keycap.
+    with BuildSketch() as cap_sk:
+        Circle(d_cap / 2)
+    extrude(amount=h_cap)
+    fillet(cap.edges().sort_by(Axis.Z)[0], radius=r_cap_top_fillet)
 
-'''
-Draw a sketch of the stem slot.
-'''
-def stem_slot():
-    return (
-        cq.Sketch()
-        .rect(w_shaft, t_stem)
-        .rect(t_stem, l_stem)
-        .clean()
+    # Hollow out the body of the keycap.
+    with BuildSketch(cap.faces().sort_by(Axis.Z)[-1]) as cap_hollow_sk:
+        Circle(d_cap / 2 - t_cap_walls)
+    extrude(amount=-(h_cap - t_cap_top), mode=Mode.SUBTRACT)
+
+    # Create sketch of the stem on the inside of the keycap's top.
+    cap_top_inside = cap.faces().filter_by(Axis.Z).sort_by(Axis.Z)[-2]
+    with BuildSketch(cap_top_inside) as stem_sk:
+        stem_shaft = Rectangle(width=l_shaft, height=w_shaft)
+        fillet(stem_shaft.vertices(), radius=0.5)
+        Rectangle(width=t_stem, height=w_shaft, mode=Mode.SUBTRACT)
+        Rectangle(width=l_stem, height=t_stem, mode=Mode.SUBTRACT)
+    stem = extrude(amount=h_shaft)
+
+    # Select and chamfer the top inner edges of the stem.
+    stem_top_inner_edges = (
+        stem.edges()
+        .group_by(Axis.Z)[-1]
+        .filter_by_position(Axis.X, -l_stem / 2, l_stem / 2)
+        .filter_by_position(Axis.Y, -w_shaft / 2, w_shaft / 2, (False, False))
     )
+    chamfer(stem_top_inner_edges, h_stem_slot_chamfer, l_stem_slot_chamfer)
 
+    # Cut notches in switch corner positions to prevent the walls colliding
+    # with the switch.
+    with BuildSketch(cap.faces().sort_by(Axis.Z)[-1]) as corner_gaps_sk:
+        Rectangle(w_corner_gaps, d_cap, 45)
+        mirror()
+    extrude(amount=-h_corner_gaps, mode=Mode.SUBTRACT)
 
-'''
-Chamfer the inner edges of the stem slot.
+show(
+    cap,
+    # stem_top_inner_edges,
+    colors=["gold", "cyan", "magenta"],
+    # transparent=True,
+)
 
-This is done in three steps in order to work around an annoying CadQuery bug
-with asymmetric chamfers of multiple edges.
-'''
-def chamfer_stem_slot(cap):
-    return (
-        cap
-        .faces(">Z[-2]")
-        .edges("#Z except (>>X or <<X or >>Y or <<Y)")
-        .edges("not (<<X and <<Y[2] or <<X[-2] and <<Y[1])")
-        .chamfer(l_stem_slot_chamfer, h_stem_slot_chamfer)
-
-        .faces(">Z[-2]")
-        .edges("#Z except (>>X or <<X or >>Y or <<Y)")
-        .edges("<<X[-2]")
-        .chamfer(h_stem_slot_chamfer, l_stem_slot_chamfer)
-
-        .faces(">Z[-2]")
-        .edges("#Z except (>>X or <<X or >>Y or <<Y)")
-        .edges(">>Y[-4] or >>Y[-2]")
-        .chamfer(l_stem_slot_chamfer, h_stem_slot_chamfer)
-    )
-
-
-def cap():
-    return (
-        cq.Workplane("XY")
-
-        # Top of cap
-        .circle(d_cap / 2)
-        .extrude(t_cap_top)
-
-        # Fillet top edge
-        .faces("<Z")
-        .fillet(r_cap_top_fillet)
-
-        # Walls of cap
-        .faces(">Z")
-        .workplane().tag("cap_top_underside")
-        .circle(d_cap / 2)
-        .circle(d_cap / 2 - t_cap_walls)
-        .extrude(h_cap_walls - t_cap_top)
-
-        # Stem shaft
-        .workplaneFromTagged("cap_top_underside")
-        .rect(w_shaft, l_shaft)
-        .extrude(h_shaft)
-        .edges("|Z")
-        .fillet(0.5)
-
-        # Stem slot
-        .faces(">Z[-2]").workplane()
-        .placeSketch(stem_slot())
-        .cutBlind(-h_stem)
-    )
-
-
-result = chamfer_stem_slot(cap())
+cap.part.export_step("NoCap.step")
+cap.part.export_stl("NoCap.stl")
