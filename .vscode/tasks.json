@@ -1,0 +1,14 @@
+{
+    "version": "2.0.0",
+  
+    "tasks": [
+      {
+        "label": "OCP CAD Viewer: Quickstart installation",
+        "command": "${command:ocpCadViewer.quickstart}",
+        "runOptions": {
+          "runOn": "folderOpen"
+        },
+        "problemMatcher": []
+      }
+    ]
+}

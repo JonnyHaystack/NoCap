@@ -1,0 +1,110 @@
+{
+    "BuildPart": {
+      "scope": "python",
+      "prefix": "bd_p",
+      "body": [
+        "with BuildPart() as ${1:partname}:",
+        "    $0"
+      ]
+    },
+    "BuildSketch": {
+      "scope": "python",
+      "prefix": "bd_s",
+      "body": [
+        "with BuildSketch() as ${1:sketchname}:",
+        "    $0"
+      ]
+    },
+    "BuildLine": {
+      "scope": "python",
+      "prefix": "bd_l",
+      "body": [
+        "with BuildLine() as ${1:linename}:",
+        "    $0"
+      ]
+    },
+    "Part": {
+      "scope": "python",
+      "prefix": "bd_bp",
+      "body": [
+        "with BuildPart() as ${1:partname}:",
+        "    ${2:class}(${3:params}, align=(Align.CENTER, Align.CENTER, Align.CENTER))",
+        "    $0"
+      ]
+    },
+    "Sketch": {
+      "scope": "python",
+      "prefix": "bd_bs",
+      "body": [
+        "with BuildSketch() as ${1:sketchname}:",
+        "    ${2:class}(${3:params}, align=(Align.CENTER, Align.CENTER))",
+        "    $0"
+      ]
+    },
+    "Line": {
+      "scope": "python",
+      "prefix": "bd_bl",
+      "body": [
+        "with BuildLine() as ${1:linename}:",
+        "    ${2:class}(${3:params})",
+        "    $0"
+      ]
+    },
+    "LineChain": {
+      "scope": "python",
+      "prefix": "bd_lchain",
+      "body": [
+        "with BuildLine() as ${1:linename}:",
+        "    ${2:l1} = Line((${3:start}), (${4:end}))",
+        "    ${5:l2} = Line(${2:l1} @ 0, (${6:end}))",
+        "    ${7:l3} = Line(${5:l2} @ 0, (${8:end}))",
+        "    $0"
+      ]
+    },
+    "PartSketch": {
+      "scope": "python",
+      "prefix": "bd_pask",
+      "body": [
+        "with BuildPart() as ${1:partname}:",
+        "    with BuildSketch() as ${2:sketchname}:",
+        "        ${3:class}(${4:params}, align=(Align.CENTER, Align.CENTER))",
+        "        ${1:partname}.edges()",
+        "    $0"
+      ]
+    },
+    "SketchLine": {
+      "scope": "python",
+      "prefix": "bd_skli",
+      "body": [
+        "with BuildSketch() as ${1:sketchname}:",
+        "    with BuildLine() as ${2:linename}:",
+        "        ${3:class}(${4:params})",
+        "    make_face()",
+        "    $0"
+      ]
+    },
+    "ExtrudeLine": {
+      "scope": "python",
+      "prefix": "bd_exli",
+      "body": [
+        "with BuildPart() as ${1:partname}:",
+        "    with BuildSketch() as ${2:sketchname}:",
+        "        with BuildLine() as ${3:linename}:",
+        "            ${4:class}(${5:params})",
+        "        make_face()",
+        "    extrude(amount=${6:amount})",
+        "    $0"
+      ]
+    },
+    "ExtrudeSketch": {
+      "scope": "python",
+      "prefix": "bd_exsk",
+      "body": [
+        "with BuildPart() as ${1:partname}:",
+        "    with BuildSketch() as ${2:sketchname}:",
+        "        ${3:class}(${4:params}, align=(Align.CENTER, Align.CENTER))",
+        "    extrude(amount=${5:amount})",
+        "    $0"
+      ]
+    }
+}
